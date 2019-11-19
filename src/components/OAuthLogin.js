@@ -13,7 +13,8 @@ export default class OAuthLogin extends React.Component {
         })
         .then(() => {
           this.auth = window.gapi.auth2.getAuthInstance();
-          this.setState({ isSignedIn: this.auth.isSignedIn.get() });
+          this.onAuthChange();
+          this.auth.isSignedIn.listen(this.onAuthChange);
         })
         .catch(err => {
           console.log('something went wrong:', err);
@@ -21,11 +22,15 @@ export default class OAuthLogin extends React.Component {
     });
   }
 
+  onAuthChange = () => {
+    this.setState({ isSignedIn: this.auth.isSignedIn.get() });
+  };
+
   renderAuthButtonText() {
     if (this.state.isSignedIn === null) {
-      return <div>I don't know if we're signed in</div>;
+      return <div>I don't know if you're signed in.</div>;
     } else if (this.state.isSignedIn) {
-      return <div>You're signed in!</div>;
+      return <div>You're already signed in!</div>;
     }
     return <div>It seems you're not signed in.</div>;
   }
