@@ -26,18 +26,30 @@ export default class OAuthLogin extends React.Component {
     this.setState({ isSignedIn: this.auth.isSignedIn.get() });
   };
 
-  renderAuthButtonText() {
+  renderAuthButton() {
     if (this.state.isSignedIn === null) {
-      return <div>I don't know if you're signed in.</div>;
+      return null;
     } else if (this.state.isSignedIn) {
-      return <div>You're already signed in!</div>;
+      return (
+        <button className="ui red google button " onClick={this.onClick}>
+          <i className="google icon" />
+          Sign out
+        </button>
+      );
     }
-    return <div>It seems you're not signed in.</div>;
+    return (
+      <button className="ui green google button " onClick={this.onClick}>
+        <i className="google icon" />
+        Sign in
+      </button>
+    );
   }
 
+  onClick = () => {
+    this.auth.isSignedIn.get() ? this.auth.signOut() : this.auth.signIn();
+  };
+
   render() {
-    return (
-      <button onClick={this.onClick}>{this.renderAuthButtonText()}</button>
-    );
+    return <>{this.renderAuthButton()}</>;
   }
 }
