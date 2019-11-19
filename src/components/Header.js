@@ -1,5 +1,7 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+import OAuthLogin from './OAuthLogin';
 
 const Header = () => {
   return (
@@ -11,6 +13,7 @@ const Header = () => {
         <Link to="/" className="item">
           See all streams
         </Link>
+        <OAuthLogin />
       </div>
     </div>
   );
