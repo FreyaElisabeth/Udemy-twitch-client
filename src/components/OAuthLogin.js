@@ -1,8 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { signIn, signOut } from '../actions';
 
-export default class OAuthLogin extends React.Component {
-  state = { isSignedIn: null };
-
+class OAuthLogin extends React.Component {
   componentDidMount() {
     window.gapi.load('client:auth2', () => {
       window.gapi.client
@@ -13,7 +13,7 @@ export default class OAuthLogin extends React.Component {
         })
         .then(() => {
           this.auth = window.gapi.auth2.getAuthInstance();
-          this.onAuthChange();
+          this.onAuthChange(this.auth.isSignedIn.get());
           this.auth.isSignedIn.listen(this.onAuthChange);
         })
         .catch(err => {
@@ -23,12 +23,12 @@ export default class OAuthLogin extends React.Component {
   }
 
   renderAuthButton() {
-    if (this.state.isSignedIn === null) {
+    if (this.props.isSignedIn === null) {
       return null;
-    } else if (this.state.isSignedIn) {
+    } else if (this.props.isSignedIn) {
       return (
         <button
-          className="ui red google button "
+          className="ui red google button"
           onClick={this.changeAuthStatus}
         >
           <i className="google icon" />
@@ -38,7 +38,7 @@ export default class OAuthLogin extends React.Component {
     }
     return (
       <button
-        className="ui green google button "
+        className="ui green google button"
         onClick={this.changeAuthStatus}
       >
         <i className="google icon" />
@@ -51,11 +51,17 @@ export default class OAuthLogin extends React.Component {
     this.auth.isSignedIn.get() ? this.auth.signOut() : this.auth.signIn();
   };
 
-  onAuthChange = () => {
-    this.setState({ isSignedIn: this.auth.isSignedIn.get() });
+  onAuthChange = isSignedIn => {
+    isSignedIn ? this.props.signIn() : this.props.signOut();
   };
 
   render() {
     return <>{this.renderAuthButton()}</>;
   }
 }
+
+const mapStateToProps = state => {
+  return { isSignedIn: state.auth.isSignedIn };
+};
+
+export default connect(mapStateToProps, { signIn, signOut })(OAuthLogin);
